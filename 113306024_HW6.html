@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>113306024_HW6_1A2B</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: beige;
+        }
+        h1 {
+            border: 2px solid black;
+            background-color: blanchedalmond;
+            padding: 10px;
+            display: inline-block;
+        }
+        h2 {
+            border: 2px solid black;
+            background-color: mistyrose;
+            display: inline-block;
+        }
+        #inputArea, #resultArea {
+            border: 2px solid black;
+            background-color: honeydew;
+            padding: 15px;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #result div {
+            border: 1px solid lightgray;
+            padding: 5px;
+            margin: 5px 0;
+            background-color: lightyellow;
+        }
+    </style>
+</head>
+<body>
+    <h1>113306024_HW6_1A2B</h1>
+    <div id="inputArea">
+        <input id="userInput" type="text" placeholder="請輸入4個不重複的數字" maxlength="4">
+        <button onclick="submitGuess()">猜!</button>
+        <button onclick="resetGame()">重新開始</button>
+    </div>
+    <div id="resultArea">
+        <h2>遊戲紀錄</h2>
+        <div id="result"></div>
+        <div id="attempts">猜測次數：0</div>
+    </div>
+    <script>
+        function generateAnswer() {
+        const numbers = Array.from({ length: 10 }, (_, i) => i);
+        const answer = [];
+        while (answer.length < 4) {
+            const index = Math.floor(Math.random() * numbers.length);
+            answer.push(numbers.splice(index, 1)[0]);
+        }
+        return answer.join('');
+        }
+
+        function initializeGame() {
+            answer = generateAnswer();
+            attempts = 0;
+            document.getElementById("userInput").value = "";
+            document.getElementById("userInput").disabled = false;
+            document.getElementById("result").innerHTML = "";
+            document.getElementById("attempts").textContent = "猜測次數：0";
+            console.log(answer);
+        }
+        
+        function isValidInput(input) {
+        if (input.length !== 4 || isNaN(input)) {
+            alert("請輸入 4 個數字！");
+            return false;
+        }
+        const digits = new Set(input);
+        if (digits.size !== 4) {
+            alert("輸入的數字不能重複！");
+            return false;
+        }
+        return true;
+        }
+        
+        function calculateResult(input, answer) {
+        let a = 0, b = 0;
+        for (let i = 0; i < input.length; i++) {
+        if (input[i] === answer[i]) {
+            a++;
+        } else if (answer.includes(input[i])) {
+            b++;
+        }
+        }
+        return `${a}A${b}B`;
+        }
+        let attempts = 0; // 記錄猜測次數
+
+        function submitGuess() {
+        const userInput = document.getElementById("userInput").value;
+        if (!isValidInput(userInput)) return;
+
+        attempts++;
+        const result = calculateResult(userInput, answer);
+        const resultDiv = document.getElementById("result");
+        const attemptsDiv = document.getElementById("attempts");
+
+        const entry = document.createElement("div");
+        entry.textContent = `第 ${attempts} 次猜測：${userInput} - ${result}`;
+        resultDiv.appendChild(entry);
+
+        attemptsDiv.textContent = `猜測次數：${attempts}`;
+
+        if (result === "4A0B") {
+            alert(`恭喜答對！總共猜了 ${attempts} 次\n請按重新開始，挑戰新的一局吧!`);
+            document.getElementById("userInput").disabled = true;
+        }
+
+        document.getElementById("userInput").value = ""; // 清空輸入框
+        }   
+
+        function resetGame() {
+            initializeGame();
+            alert("遊戲已重置！請重新開始猜數字");
+        }
+
+        initializeGame();
+    </script>
+</body>
+</html>
